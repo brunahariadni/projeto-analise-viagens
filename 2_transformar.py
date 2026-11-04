@@ -104,7 +104,6 @@ def transformar_viagem(linha):
     id_viagem = limpar_texto(id_viagem)
     nome_orgao_superior = limpar_texto(nome_orgao_superior)
 
-    # Campos obrigatórios da tabela
     if not id_viagem or not nome_orgao_superior:
         return None
 
@@ -116,7 +115,6 @@ def transformar_viagem(linha):
     valor_devolucao = converter_decimal(valor_devolucao)
     valor_outros_gastos = converter_decimal(valor_outros_gastos)
 
-    # Calcula o custo líquido da viagem.
     valor_total = (
         (valor_diarias or Decimal("0.00"))
         + (valor_passagens or Decimal("0.00"))
@@ -124,7 +122,6 @@ def transformar_viagem(linha):
         - (valor_devolucao or Decimal("0.00"))
     )
 
-    # Calcula a duração em dias.
     duracao_dias = None
 
     if data_inicio and data_fim:
@@ -317,7 +314,6 @@ def main():
     try:
         print("Conectando ao banco de dados...")
 
-        # Duas conexões evitam conflito entre leitura e gravação.
         conexao_origem = conectar()
         conexao_destino = conectar()
 
@@ -325,7 +321,6 @@ def main():
 
         limpar_tabelas_silver(conexao_destino)
 
-        # 1. Viagens: tabela principal.
         consulta_viagem = """
             SELECT
                 `Identificador do processo de viagem`,
@@ -373,10 +368,8 @@ def main():
             "silver_viagem",
         )
 
-        # Atualiza a visão dos dados na conexão de leitura.
         conexao_origem.commit()
 
-        # 2. Pagamentos: somente viagens existentes na Silver.
         consulta_pagamento = """
             SELECT
                 r.`Identificador do processo de viagem`,
@@ -408,7 +401,6 @@ def main():
             "silver_pagamento",
         )
 
-        # 3. Passagens.
         consulta_passagem = """
             SELECT
                 r.`Identificador do processo de viagem`,
@@ -451,7 +443,6 @@ def main():
             "silver_passagem",
         )
 
-        # 4. Trechos.
         consulta_trecho = """
             SELECT
                 r.`Identificador do processo de viagem`,

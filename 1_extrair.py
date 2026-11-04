@@ -42,7 +42,6 @@ def baixar_e_extrair():
     with zipfile.ZipFile(caminho_zip, "r") as arquivo:
         arquivo.extractall(PASTA_DADOS)
 
-    # Localiza os CSVs, mesmo que estejam dentro de uma subpasta.
     for configuracao in ARQUIVOS.values():
         nome_csv = configuracao["csv"]
 
@@ -75,7 +74,6 @@ def importar_csv(conexao, nome_csv, tabela_raw):
 
     print(f"\nIniciando importação: {nome_csv}")
 
-    # Lê o cabeçalho para identificar as colunas.
     cabecalho = pd.read_csv(
         caminho_csv,
         sep=CSV_SEPARADOR,
@@ -84,11 +82,8 @@ def importar_csv(conexao, nome_csv, tabela_raw):
         nrows=0,
     )
 
-    # Remove espaços extras dos nomes das colunas.
-    # Necessário especialmente para o arquivo Trecho.
     colunas = [coluna.strip() for coluna in cabecalho.columns]
 
-    # Monta o comando SQL de inserção.
     nomes_colunas = ", ".join(
         f"`{coluna}`" for coluna in colunas
     )
@@ -100,7 +95,6 @@ def importar_csv(conexao, nome_csv, tabela_raw):
         f"VALUES ({marcadores})"
     )
 
-    # Limpa a tabela antes de importar os dados novamente.
     executar(
         conexao,
         f"TRUNCATE TABLE `{tabela_raw}`"
@@ -108,7 +102,6 @@ def importar_csv(conexao, nome_csv, tabela_raw):
 
     total_registros = 0
 
-    # Lê o CSV em blocos para economizar memória.
     blocos = pd.read_csv(
         caminho_csv,
         sep=CSV_SEPARADOR,
@@ -120,12 +113,10 @@ def importar_csv(conexao, nome_csv, tabela_raw):
 
     for numero_bloco, bloco in enumerate(blocos, start=1):
 
-        # Mantém os nomes das colunas compatíveis com o MySQL.
         bloco.columns = [
             coluna.strip() for coluna in bloco.columns
         ]
 
-        # Transforma as linhas em tuplas para o executemany.
         linhas = list(
             bloco.itertuples(index=False, name=None)
         )
