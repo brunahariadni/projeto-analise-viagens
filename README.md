@@ -6,6 +6,8 @@ Este projeto tem como objetivo analisar as despesas relacionadas às viagens rea
 
 A proposta é aplicar conceitos de análise e tratamento de dados, modelagem e consultas SQL, além de utilizar Python para explorar os dados e gerar informações relevantes.
 
+Link do Github: https://github.com/brunahariadni/projeto-analise-viagens
+
 ## Objetivos
 
 - Organizar e estruturar os dados disponibilizados.
